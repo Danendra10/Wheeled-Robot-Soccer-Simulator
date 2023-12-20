@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sdf version="1.5">
+   <model name="iris_cyan">
+      <static>false</static>
+      <link name="chassis">
+         <pose>0 0 0 0 0 0</pose>
+         <inertial>
+            <mass>3900</mass>
+            <pose>0 0 0 0 0 0</pose>
+            <inertia>
+               <ixx>650</ixx>  <!--0.65-->
+               <ixy>0</ixy>
+               <ixz>0</ixz>
+               <iyy>650</iyy> <!--0.65-->
+               <iyz>0</iyz>
+               <izz>1625</izz> <!--1.625-->
+            </inertia>
+         </inertial>
+            
+         <collision name="collision">
+            <pose>0 0 0 1.57 0 1.54</pose>
+            <geometry>
+               <mesh>
+                    <scale>0.001 0.001 0.001</scale> 
+                  <uri>file://iris_cyan/meshes/collision.dae</uri>
+               </mesh>
+            </geometry>
+            <surface>
+               <bounce>
+                  <restitution_coefficient>0</restitution_coefficient>
+               </bounce>
+               <friction>
+                  <ode>
+                     <mu>0.1</mu>
+                     <mu2>0.1</mu2>
+                  </ode>
+               </friction>
+               <contact>
+                  <ode>
+                    <max_vel>1</max_vel>
+                    <min_depth>0.01</min_depth>
+                 </ode>
+              </contact>
+            </surface>
+         </collision>
+
+         <visual name="visual">
+            <pose>0 0 0.21 0 0 3.14</pose>
+            <geometry>
+               <mesh>
+                  <scale>0.004 0.004 0.004</scale> 
+                 <uri>file://iris_cyan/meshes/cyanNum2.dae</uri>
+               </mesh>
+            </geometry>
+         </visual>
+
+         <velocity_decay>
+            <linear>0</linear>
+            <angular>0</angular>
+         </velocity_decay>
+
+         <self_collide>0</self_collide>
+         <gravity>1</gravity>
+
+
+         <plugin name="p3d_base_controller" filename="libgazebo_ros_p3d.so">
+            <alwaysOn>true</alwaysOn>
+            <robotNamespace></robotNamespace>
+            <bodyName>oddometry</bodyName>
+            <topicName>oddo</topicName>
+            <!-- <gaussianNoise>0.01</gaussianNoise>
+            <frameName>world</frameName>
+            <xyzOffsets>0 0 0</xyzOffsets>
+            <rpyOffsets>0 0 0</rpyOffsets> -->
+         </plugin>
+
+         <!-- Add a ray sensor, and give it a name -->
+         <sensor type="ray" name="sensor">
+            <!-- Position the ray sensor based on the specification. Also rotate
+               it by 90 degrees around the X-axis so that the <horizontal> rays
+               become vertical -->
+            <pose>0 0 0.235 0 0 0</pose>
+
+            <!-- Enable visualization to see the rays in the GUI -->
+            <visualize>false</visualize>
+
+            <!-- Set the update rate of the sensor -->
+            <update_rate>50</update_rate>
+
+            <ray>
+               <!-- The scan element contains the horizontal and vertical beams.
+                  We are leaving out the vertical beams for this tutorial. -->
+               <scan>
+
+                  <!-- The horizontal beams -->
+                  <horizontal>
+                     <!-- The velodyne has 32 beams(samples) -->
+                     <samples>145</samples>
+
+                     <!-- Resolution is multiplied by samples to determine number of
+                           simulated beams vs interpolated beams. See:
+                           http://sdformat.org/spec?ver=1.6&elem=sensor#horizontal_resolution
+                     -->
+                     <resolution>1</resolution>
+
+                     <!-- Minimum angle in radians -->
+                     <min_angle>-1.57079632679</min_angle>
+
+                     <!-- Maximum angle in radians -->
+                     <max_angle>4.71238898038</max_angle>
+                  </horizontal>
+               </scan>
+
+               <!-- Range defines characteristics of an individual beam -->
+               <range>
+
+                  <!-- Minimum distance of the beam -->
+                  <min>0.35</min>
+
+                  <!-- Maximum distance of the beam -->
+                  <max>3.5</max>
+
+                  <!-- Linear resolution of the beam -->
+                  <resolution>0</resolution>
+               </range>
+            </ray>
+            <plugin name="laser_controller" filename="libgazebo_ros_laser.so">
+               <!-- Dikosongi agar nama rostopic mengikuti namespace -->
+               <robotNamespace></robotNamespace>
+               <topicName>radial_scan</topicName>
+               <frameName>lidar</frameName>
+            </plugin>
+         </sensor>
+
+         <sensor name="camera" type="wideanglecamera">
+            <!-- POSE HASIL BISEKSI JADI WAJAR KALO ANEH, MUNGKIN KARENA MODEL NYA GA SEMPURNA-->
+            <!-- <pose>0.025 0 1 0 89.6 0</pose> MODEL LAMA  -->
+            <!-- <pose>-0.0085 0 1 0 89.55 0</pose> KETINGGIAN PAS -->
+            <pose>-0.0085 0 1.055 0 89.55 0</pose>
+
+            <camera>
+               <horizontal_fov>6.283</horizontal_fov>
+               <image>
+                  <width>360</width>
+                  <height>640</height>
+               </image>
+               <clip>
+                  <near>0.01</near>
+                  <far>6</far>
+               </clip>
+               <!-- A new section named `lens`. -->
+               <lens>
+                  <!-- type element is mandatory -->
+                  <type>custom</type>
+                  <!-- manually defined mapping function r = c1*f*fun(theta/c2 + c3) -->
+                  <!-- More information here: https://en.wikipedia.org/wiki/Fisheye_lens#Mapping_function -->
+                  <custom_function>
+                     <!-- <c1>1.05</c1> -->
+                     <!-- Best 4.8 BUT dicilikne for ngepasne 360x640 -->
+                     <c1>10</c1>
+                     <!-- linear scaling -->
+                     <!-- <c2>4</c2> -->
+                     <c2>30</c2>
+                     <!-- angle scaling -->
+                     <!-- <f>1.0</f> -->
+                     <f>3</f>
+                     <!-- one more scaling parameter -->
+                     <fun>tan</fun>
+                     <!-- one of sin,tan,id -->
+                  </custom_function>
+                  <!-- if it is set to `true` your horizontal FOV will ramain as defined -->
+                  <!-- othervise it depends on lens type and custom function, if there is one -->
+                  <scale_to_hfov>false</scale_to_hfov>
+                  <!-- clip everything that is outside of this angle -->
+                  <!-- <cutoff_angle>3.1415</cutoff_angle> -->
+                  <cutoff_angle>1.52</cutoff_angle>
+                  
+                  <!-- resolution of the cubemap texture, the highter it is - the sharper is your image -->
+                  <!-- <env_texture_size>512</env_texture_size> -->
+                  <env_texture_size>300</env_texture_size>
+               </lens>
+
+               <always_on>1</always_on>
+               <update_rate>30</update_rate>
+            </camera>
+
+            <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+               <robotNamespace></robotNamespace>
+               <cameraName>omni_cam</cameraName>
+               <imageTopicName>omni_image_raw</imageTopicName>
+               <cameraInfoTopicName>omni_camera_info</cameraInfoTopicName>
+               <frameName>omni_camera_link</frameName>
+               <hackBaseline>0.07</hackBaseline>
+            </plugin>
+         </sensor>
+      </link>
+
+      <!-- <plugin name="robot_gazebo" filename="librobot_gazebo.so"/> -->
+      <plugin name="robot_gazebo" filename="librobot_gazebo_second.so"/>
+   </model>
+</sdf>

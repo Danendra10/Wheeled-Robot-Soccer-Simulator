@@ -1,0 +1,14 @@
+material bola/Orange
+{
+    receive_shadows off
+    technique
+    {
+        pass
+        {
+            texture_unit
+            {
+                texture orange.jpg
+            }
+        }
+    }
+}

@@ -1,0 +1,34 @@
+<launch>
+  <!-- <param name="robot_description"
+    command="$(find xacro)/xacro $(find iris_robot_description)/urdf/iris_robot.xacro" /> -->
+  <include
+    file="$(find gazebo_ros)/launch/empty_world.launch">
+    <!-- <arg name="world_name" value="$(find simulator)/worlds/kri_nasional.world" /> -->
+
+    <arg name="paused" value="false" />
+    <arg name="verbose" value="false" />
+    <arg name="use_sim_time" value="true" />
+  </include>
+  <!-- <node name="spawn_simulation_entity" pkg="simulator" type="spawn_simulation_entity.sh"/> -->
+  <node name="spawn_new_model" pkg="simulator"
+    type="spawn_new_model.sh" />
+
+  <!-- <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description
+  -urdf -model cyan1 -x -5.5 -y 0 -z 0 -R 0 -P 0 -Y 2.34"/> -->
+
+  <!-- <node name="spawn_ball" pkg="simulator" type="spawn_ball.sh"/> -->
+  <!-- <node name="spawn_robot" pkg="simulator" type="spawn_robot.sh"/> -->
+  <!-- <node name="robot_gazebo" pkg="simulation" type="robot_gazebo" output="screen"
+  respawn="true"/> -->
+  <!-- <node name= "robot_simulation" pkg= "simulation" type="robot_gazebo.cc" output="screen"
+  required = "true"/> -->
+  <!-- <node name= "" pkg= "iris_gazebo" type="camera_read_cyan_3.py" output="screen" required =
+  "true"/> -->
+  <!-- <node name= "camera_read_cyan_2" pkg= "iris_gazebo" type="camera_read_cyan_2.py"
+  output="screen" required = "true"/> -->
+  <!-- <node name= "camera_read_cyan_1" pkg= "iris_gazebo" type="camera_read_cyan_1.py"
+  output="screen" required = "true"/> -->
+  <!-- <node name= "robot_gazebo" pkg= "simulation" type="robot_gazebo" output="screen" required =
+  "true"/> -->
+  <!-- <<node name= "ball_gazebo" pkg= "simulation" type="ball_gazebo" output="screen" required =
+  "true"/> --> --> </launch>
